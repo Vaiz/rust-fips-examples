@@ -1,22 +1,57 @@
-# Example of propagating FIPS through dependency tree
+# Example of Propagating FIPS through Dependency Tree
 
-## Building app on Ubuntu
+## Overview
 
-> aws-lc-rs doesn't have bindings for windows, so it's better to use linux distibutive instead
+This example demonstrates how to propagate FIPS mode through a dependency tree in Rust. The key idea
+is to enable the FIPS feature in the `Cargo.toml` of the final binary, even if it doesn't have a
+direct dependency on the FIPS library.
+
+## Building the App on Ubuntu
+
+> Note: `aws-lc-rs` doesn't have bindings for Windows, so it's recommended to use a Linux distribution instead.
 
 ```bash
 sudo apt update && sudo apt install -y cmake golang-go
 git clone https://github.com/Vaiz/rust-fips-examples.git
-cd rust-fips-examples/
+cd rust-fips-examples
 cargo run --manifest-path ./crypto_app/Cargo.toml
 cargo run --manifest-path ./crypto_app_with_fips/Cargo.toml
 ```
 
 Expected output:
-crypto_app: `Error enabling FIPS mode: FIPS mode not enabled!`
-crypto_app_with_fips: `FIPS mode enabled`
 
-## cargo tree
+- `crypto_app`: `Error enabling FIPS mode: FIPS mode not enabled!`
+
+- `crypto_app_with_fips`: `FIPS mode enabled`
+
+## Enabling FIPS Mode
+
+To enable FIPS mode, you need to add the FIPS feature to the `Cargo.toml` of the final binary. This
+example includes two binaries: `crypto_app` and `crypto_app_with_fips`. The latter enables FIPS mode
+by specifying the FIPS feature in its `Cargo.toml`.
+
+### `crypto_app/Cargo.toml`
+
+```toml
+...[dependencies]
+some_crypto_lib = { path = "../some_crypto_lib" }
+```
+
+### `crypto_app_with_fips/Cargo.toml`
+
+```toml
+...
+[dependencies]
+some_crypto_lib = { path = "../some_crypto_lib" }
+aws-lc-rs = { version = "1.12.2", features = ["fips"] }
+```
+
+## Cargo Tree
+
+Using `cargo tree` command, it's possible to see that the `fips` feature adds the `aws-lc-fips-sys`
+crate into the dependencies.
+
+The following command shows the dependency tree for `crypto_app`:
 
 ```bash
 cargo tree --manifest-path ./crypto_app/Cargo.toml
@@ -39,6 +74,8 @@ crypto_app v0.1.0 (rust-fips-examples/crypto_app)
         ├── untrusted v0.7.1
         └── zeroize v1.8.1
 ```
+
+The following command shows the dependency tree for `crypto_app_with_fips`:
 
 ```bash
 cargo tree --manifest-path ./crypto_app_with_fips/Cargo.toml
