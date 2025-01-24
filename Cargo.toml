@@ -1,0 +1,13 @@
+[workspace]
+members = [
+    "crypto_app",
+    "crypto_app_with_fips",
+    "some_crypto_lib",
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+
+[workspace.dependencies]
+aws-lc-rs = "1.12.2"
