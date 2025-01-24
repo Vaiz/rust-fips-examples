@@ -20,9 +20,13 @@ cargo run --manifest-path ./crypto_app_with_fips/Cargo.toml
 
 Expected output:
 
-- `crypto_app`: `Error enabling FIPS mode: FIPS mode not enabled!`
+```bash
+$ cargo run --manifest-path ./crypto_app/Cargo.toml
+Error enabling FIPS mode: FIPS mode not enabled!
 
-- `crypto_app_with_fips`: `FIPS mode enabled`
+$ cargo run --manifest-path ./crypto_app_with_fips/Cargo.toml
+FIPS mode enabled
+```
 
 ## Enabling FIPS Mode
 
@@ -33,7 +37,8 @@ by specifying the FIPS feature in its `Cargo.toml`.
 ### `crypto_app/Cargo.toml`
 
 ```toml
-...[dependencies]
+...
+[dependencies]
 some_crypto_lib = { path = "../some_crypto_lib" }
 ```
 
