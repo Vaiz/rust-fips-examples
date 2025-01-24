@@ -1,1 +1,4 @@
-/target
+/crypto_app/target
+/crypto_app_with_fips/target
+/some_crypt_lib/target
+Cargo.lock
